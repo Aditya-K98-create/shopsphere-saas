@@ -1,0 +1,9 @@
+node_modules/
+.expo/
+backend/target/
+
+*.log
+error.txt
+
+.vscode/
+.env
