@@ -2,6 +2,7 @@ package com.ecommerce.backend.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,12 +17,22 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "customer_name")
     private String customerName;
+
+    @Column(name = "product_name")
     private String productName;
+
     private Double amount;
+
     private String status; 
+
+    @Column(name = "tracking_id")
     private String trackingId;
+
     private String carrier;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Getters and Setters

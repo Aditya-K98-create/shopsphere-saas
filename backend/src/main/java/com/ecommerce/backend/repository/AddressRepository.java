@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ecommerce.backend.entity.Address;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
-    // Custom query to fetch all saved addresses for a specific logged-in user
+   
     List<Address> findByUserId(Long userId);
-}
+}    
