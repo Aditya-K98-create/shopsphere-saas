@@ -7,24 +7,36 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "orders")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "customer_name")
-    private String customerName;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Column(name = "product_name")
-    private String productName;
+    @ManyToOne
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
 
+    @Column(nullable = false)
     private Double amount;
 
+    @Column(nullable = false)
     private String status; 
 
     @Column(name = "tracking_id")
@@ -32,31 +44,6 @@ public class Order {
 
     private String carrier;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getCustomerName() { return customerName; }
-    public void setCustomerName(String customerName) { this.customerName = customerName; }
-
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
-
-    public Double getAmount() { return amount; }
-    public void setAmount(Double amount) { this.amount = amount; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public String getTrackingId() { return trackingId; }
-    public void setTrackingId(String trackingId) { this.trackingId = trackingId; }
-
-    public String getCarrier() { return carrier; }
-    public void setCarrier(String carrier) { this.carrier = carrier; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
