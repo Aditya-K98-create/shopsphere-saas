@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +20,8 @@ import com.ecommerce.backend.repository.ProductRepository;
 
 @RestController
 @RequestMapping("/api/products")
-
+// @CrossOrigin enables your React Native/Expo frontend running on localhost:8081 to fetch safely
+@CrossOrigin(origins = "*") 
 public class ProductController {
 
     @Autowired
@@ -27,9 +29,16 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<Product>> getProducts(@RequestParam(value = "category", required = false) String category) {
-        if (category != null && !category.trim().isEmpty() && !category.equalsIgnoreCase("all")) {
+        // Enhanced condition checks if category exists, isn't empty, and doesn't equal variations of "all"
+        if (category != null && !category.trim().isEmpty() 
+            && !category.equalsIgnoreCase("all") 
+            && !category.equalsIgnoreCase("all collection")
+            && !category.equalsIgnoreCase("our all")) {
+            
             return ResponseEntity.ok(productRepository.findByCategoryIgnoreCase(category.trim()));
         }
+        
+        // Default fallback: Return every single product in the Postgres database
         return ResponseEntity.ok(productRepository.findAll());
     }
 
@@ -42,7 +51,6 @@ public class ProductController {
 
     @PostMapping("/add")
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-      
         return ResponseEntity.ok(productRepository.save(product));
     }
 

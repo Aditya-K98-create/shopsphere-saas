@@ -42,12 +42,7 @@ public class OrderController {
         Map<String, Object> metrics = new HashMap<>();
         
         long totalOrders = orderRepository.count();
-        
-        
-        Double totalRevenue = orderRepository.calculateTotalRevenue();
-        if (totalRevenue == null) {
-            totalRevenue = 0.0;
-        }
+        double totalRevenue = orderRepository.calculateTotalRevenue();
         
         long deliveredOrders = orderRepository.countByStatus("Delivered");
 
