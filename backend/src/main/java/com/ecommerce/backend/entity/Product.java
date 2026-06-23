@@ -22,10 +22,10 @@ public class Product {
     private String tag;
     private String category;
 
-    // IMPORTANT: Empty default constructor required by JPA/Hibernate
+    
     public Product() {}
 
-    // Getters and Setters
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
