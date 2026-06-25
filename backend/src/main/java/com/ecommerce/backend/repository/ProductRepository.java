@@ -9,6 +9,6 @@ import com.ecommerce.backend.entity.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // This tells Spring Data JPA to automatically run a filtered SQL query
+    
     List<Product> findByCategoryIgnoreCase(String category);
 }

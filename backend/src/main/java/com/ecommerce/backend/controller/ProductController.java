@@ -20,64 +20,90 @@ import com.ecommerce.backend.repository.ProductRepository;
 
 @RestController
 @RequestMapping("/api/products")
-// @CrossOrigin enables your React Native/Expo frontend running on localhost:8081 to fetch safely
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "*")
 public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getProducts(@RequestParam(value = "category", required = false) String category) {
-        // Enhanced condition checks if category exists, isn't empty, and doesn't equal variations of "all"
-        if (category != null && !category.trim().isEmpty() 
-            && !category.equalsIgnoreCase("all") 
-            && !category.equalsIgnoreCase("all collection")
-            && !category.equalsIgnoreCase("our all")) {
-            
-            return ResponseEntity.ok(productRepository.findByCategoryIgnoreCase(category.trim()));
+    public ResponseEntity<List<Product>> getProducts(
+            @RequestParam(value = "category", required = false) String category) {
+
+        if (category != null
+                && !category.trim().isEmpty()
+                && !category.equalsIgnoreCase("all")
+                && !category.equalsIgnoreCase("all collection")
+                && !category.equalsIgnoreCase("our all")) {
+
+            return ResponseEntity.ok(
+                    productRepository.findByCategoryIgnoreCase(category.trim()));
         }
-        
-        // Default fallback: Return every single product in the Postgres database
+
         return ResponseEntity.ok(productRepository.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable("id") Long id) {
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+
         return productRepository.findById(id)
-                .map(product -> ResponseEntity.ok(product))
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
+
     @PostMapping("/add")
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        return ResponseEntity.ok(productRepository.save(product));
+
+        if (product.getImages() == null) {
+            product.setImages(List.of());
+        }
+
+        Product savedProduct = productRepository.save(product);
+
+        return ResponseEntity.ok(savedProduct);
     }
 
+    
     @PutMapping("/update/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable("id") Long id, @RequestBody Product updatedProduct) {
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Long id,
+            @RequestBody Product updatedProduct) {
+
         return productRepository.findById(id)
                 .map(existingProduct -> {
+
                     existingProduct.setName(updatedProduct.getName());
                     existingProduct.setDescription(updatedProduct.getDescription());
                     existingProduct.setPrice(updatedProduct.getPrice());
-                    existingProduct.setRating(updatedProduct.getRating());
-                    existingProduct.setImg(updatedProduct.getImg());
-                    existingProduct.setTag(updatedProduct.getTag());
+
                     existingProduct.setCategory(updatedProduct.getCategory());
-                    
+                    existingProduct.setRating(updatedProduct.getRating());
+                    existingProduct.setTag(updatedProduct.getTag());
+
+                    // Cover Image
+                    existingProduct.setMainImage(updatedProduct.getMainImage());
+
+                    // Product Gallery Images
+                    existingProduct.setImages(updatedProduct.getImages());
+
                     Product savedProduct = productRepository.save(existingProduct);
+
                     return ResponseEntity.ok(savedProduct);
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+
         return productRepository.findById(id)
                 .map(product -> {
                     productRepository.delete(product);
-                    return ResponseEntity.ok().body("{\"message\": \"Product deleted successfully!\"}");
+
+                    return ResponseEntity.ok()
+                            .body("{\"message\":\"Product deleted successfully!\"}");
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
