@@ -31,37 +31,70 @@ public class Product {
     @Column(nullable = false)
     private Double price;
 
-    // Product Category
     private String category;
 
-    // Product Rating
     private Double rating;
 
-    // Product Tag (Best Seller, New Arrival, etc.)
     private String tag;
 
-    // Primary Product Image (Thumbnail / Cover Image)
     private String mainImage;
 
-    // Additional Images for Image Slider
+  
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "product_images",
-            joinColumns = @JoinColumn(name = "product_id")
-    )
+            joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")
     private List<String> images = new ArrayList<>();
 
-    // ==========================
-    // Constructors
-    // ==========================
+   
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "product_colors",
+            joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "color")
+    private List<String> colors = new ArrayList<>();
+
+    
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "product_storage",
+            joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "storage")
+    private List<String> storage = new ArrayList<>();
+
+  
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "product_ram",
+            joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "ram")
+    private List<String> ram = new ArrayList<>();
+
+    
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "product_sizes",
+            joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "size")
+    private List<String> sizes = new ArrayList<>();
+
+   
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "product_editions",
+            joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "edition")
+    private List<String> editions = new ArrayList<>();
 
     public Product() {
     }
-
-    // ==========================
-    // Getters & Setters
-    // ==========================
 
     public Long getId() {
         return id;
@@ -133,5 +166,45 @@ public class Product {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public List<String> getColors() {
+        return colors;
+    }
+
+    public void setColors(List<String> colors) {
+        this.colors = colors;
+    }
+
+    public List<String> getStorage() {
+        return storage;
+    }
+
+    public void setStorage(List<String> storage) {
+        this.storage = storage;
+    }
+
+    public List<String> getRam() {
+        return ram;
+    }
+
+    public void setRam(List<String> ram) {
+        this.ram = ram;
+    }
+
+    public List<String> getSizes() {
+        return sizes;
+    }
+
+    public void setSizes(List<String> sizes) {
+        this.sizes = sizes;
+    }
+
+    public List<String> getEditions() {
+        return editions;
+    }
+
+    public void setEditions(List<String> editions) {
+        this.editions = editions;
     }
 }
