@@ -25,25 +25,24 @@ public class AddressController {
         this.addressRepository = addressRepository;
     }
 
-    // Get all addresses
+   
     @GetMapping
     public List<Address> getAllAddresses() {
         return addressRepository.findAll();
     }
 
-    // Get addresses by userId
+    
     @GetMapping("/user/{userId}")
     public List<Address> getAddressesByUser(@PathVariable Long userId) {
         return addressRepository.findByUserId(userId);
     }
 
-    // Add new address
     @PostMapping
     public Address addAddress(@RequestBody Address address) {
         return addressRepository.save(address);
     }
 
-    // Delete address
+    
     @DeleteMapping("/{id}")
     public void deleteAddress(@PathVariable Long id) {
         addressRepository.deleteById(id);

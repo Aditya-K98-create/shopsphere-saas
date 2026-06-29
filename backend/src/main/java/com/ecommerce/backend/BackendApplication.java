@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.TimeZone;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,8 +13,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BackendApplication {
 
 	public static void main(String[] args) {
+
+		// Force Java to use the correct timezone
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Kolkata"));
+
 		validateRailwayDatabaseConfig();
 		configureDatabaseFromHostedUrl();
+
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
@@ -53,24 +59,33 @@ public class BackendApplication {
 		}
 
 		URI databaseUri = URI.create(configuredUrl);
+
 		String jdbcUrl = "jdbc:postgresql://%s:%d%s".formatted(
 				databaseUri.getHost(),
 				databaseUri.getPort() == -1 ? 5432 : databaseUri.getPort(),
 				databaseUri.getPath());
 
 		if (databaseUri.getQuery() != null && !databaseUri.getQuery().isBlank()) {
-			jdbcUrl = jdbcUrl + "?" + databaseUri.getQuery();
+			jdbcUrl += "?" + databaseUri.getQuery();
 		}
 
 		System.setProperty("spring.datasource.url", jdbcUrl);
 
 		String userInfo = databaseUri.getUserInfo();
+
 		if (userInfo != null) {
 			String[] credentials = userInfo.split(":", 2);
-			setIfMissing("spring.datasource.username", "SPRING_DATASOURCE_USERNAME", decode(credentials[0]));
+
+			setIfMissing(
+					"spring.datasource.username",
+					"SPRING_DATASOURCE_USERNAME",
+					decode(credentials[0]));
 
 			if (credentials.length > 1) {
-				setIfMissing("spring.datasource.password", "SPRING_DATASOURCE_PASSWORD", decode(credentials[1]));
+				setIfMissing(
+						"spring.datasource.password",
+						"SPRING_DATASOURCE_PASSWORD",
+						decode(credentials[1]));
 			}
 		}
 	}
@@ -85,7 +100,6 @@ public class BackendApplication {
 				return value;
 			}
 		}
-
 		return null;
 	}
 
@@ -102,5 +116,4 @@ public class BackendApplication {
 			return value;
 		}
 	}
-
 }
