@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecommerce.backend.dto.LoginRequest;
+import com.ecommerce.backend.dto.LoginResponse;
 import com.ecommerce.backend.entity.User;
+import com.ecommerce.backend.jwt.JwtService;
 import com.ecommerce.backend.repository.UserRepository;
 
 @RestController
@@ -21,46 +24,67 @@ public class AuthController {
     @Autowired
     private UserRepository userRepository;
 
-    
+    @Autowired
+    private JwtService jwtService;
+
+   
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-      
+
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "Error: Email is already in use!"));
+                    .body(Map.of(
+                            "message", "Email is already registered!"
+                    ));
         }
 
-      
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole("CUSTOMER");
+        }
+
         User savedUser = userRepository.save(user);
+
         return ResponseEntity.ok(Map.of(
-            "message", "User registered successfully!",
-            "userId", savedUser.getId()
+                "message", "User registered successfully!",
+                "userId", savedUser.getId()
         ));
     }
 
     
+
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> loginRequest) {
-        String email = loginRequest.get("email");
-        String password = loginRequest.get("password");
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest request) {
 
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
 
-        Optional<User> userOptional = userRepository.findByEmail(email);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-      
-            if (user.getPassword().equals(password)) {
-                return ResponseEntity.ok(Map.of(
-                    "message", "Login Successful!",
-                    "name", user.getName(),
-                    "email", user.getEmail()
-                ));
-            }
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                            "message", "Invalid Email or Password"
+                    ));
         }
 
-        
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("message", "Invalid email address or credential password."));
+        User user = userOptional.get();
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of(
+                            "message", "Invalid Email or Password"
+                    ));
+        }
+
+        String token = jwtService.generateToken(user.getEmail());
+
+        LoginResponse response = new LoginResponse(
+                token,
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        );
+
+        return ResponseEntity.ok(response);
     }
+
 }
