@@ -81,10 +81,10 @@ public class ProductController {
                     existingProduct.setRating(updatedProduct.getRating());
                     existingProduct.setTag(updatedProduct.getTag());
 
-                    // Cover Image
+                    
                     existingProduct.setMainImage(updatedProduct.getMainImage());
 
-                    // Product Gallery Images
+                  
                     existingProduct.setImages(updatedProduct.getImages());
 
                     Product savedProduct = productRepository.save(existingProduct);

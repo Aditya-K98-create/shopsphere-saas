@@ -14,7 +14,7 @@ public class BackendApplication {
 
 	public static void main(String[] args) {
 
-		// Force Java to use the correct timezone
+		
 		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Kolkata"));
 
 		validateRailwayDatabaseConfig();

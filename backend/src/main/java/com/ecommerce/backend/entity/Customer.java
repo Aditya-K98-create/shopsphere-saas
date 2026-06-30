@@ -21,7 +21,7 @@ public class Customer {
     private Double totalSpent = 0.0;
     private String status = "Active"; // Active, Suspended
 
-    // Getters and Setters
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
